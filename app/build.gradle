@@ -26,11 +26,14 @@ dependencies {
     })
 
 
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.nvanbenschoten.motion:library:1.1.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
     compile 'com.daimajia.easing:library:2.0@aar'
     compile 'com.daimajia.androidanimations:library:2.3@aar'
+
+
+    compile 'com.karumi:dexter:4.1.0'
     testCompile 'junit:junit:4.12'
 }

@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Sieve Of Eratosthenes</string>
+    <string name="touch_to_begin">Touch to begin</string>
+
+    <string name="permission_record_denied">Microphone permission denied</string>
+    <string name="permission_record_neverask">Never ask again</string>
+    <string name="permission_record_rationale">The app needs RECORD permission so that you can say Magic number.</string>
+
+    <string name="button_allow">Allow</string>
+    <string name="button_deny">Deny</string>
+
+
+    <string name="speech_prompt">Say something&#8230;</string>
+    <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
+    <string name="tap_on_mic">Tap on mic to speak</string>
+
 </resources>

@@ -35,7 +35,7 @@ public class SplashActivity extends Activity {
                 .repeat(0)
                 .playOn(findViewById(R.id.img_splash_center));
 
-        UIUtils.showToast(ctx,"Touch to begin");
+        UIUtils.showToast(ctx,R.string.touch_to_begin);
         YoYo.with(Techniques.Tada)
                 .duration(1000)
                 .repeat(10)
