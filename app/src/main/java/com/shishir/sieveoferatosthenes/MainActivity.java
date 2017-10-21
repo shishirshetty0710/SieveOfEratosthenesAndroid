@@ -1,22 +1,22 @@
 package com.shishir.sieveoferatosthenes;
 
-import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.LinearLayout;
 
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
-import com.karumi.dexter.listener.single.PermissionListener;
 import com.nvanbenschoten.motion.ParallaxImageView;
+import com.shishir.sieveoferatosthenes.adapter.SieveOfEratosthenesAdapter;
+import com.shishir.sieveoferatosthenes.data.SieveNum;
 import com.shishir.sieveoferatosthenes.utils.UIUtils;
 
 import java.util.ArrayList;
@@ -25,13 +25,18 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    /**Used Parallax effect to splash screen background*/
+    /**
+     * Used Parallax effect to splash screen background
+     */
     private ParallaxImageView mBackground;
 
     private ImageButton btnSpeak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
 
     Context context;
+
+    RecyclerView recyclerView;
+    LinearLayout ll_mic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         context = MainActivity.this;
 
-        mBackground = (ParallaxImageView)findViewById(android.R.id.background);
+        mBackground = (ParallaxImageView) findViewById(android.R.id.background);
 
         mBackground.setImageResource(R.drawable.ancient_greek);
 
@@ -53,6 +58,14 @@ public class MainActivity extends AppCompatActivity {
                 promptSpeechInput();
             }
         });
+
+        recyclerView = (RecyclerView) findViewById(R.id.list);
+
+        ll_mic = (LinearLayout)findViewById(R.id.ll_mic);
+
+        recyclerView.setLayoutManager(new GridLayoutManager(context, 6));
+
+        recyclerView.setVisibility(View.GONE);
 
     }
 
@@ -94,6 +107,22 @@ public class MainActivity extends AppCompatActivity {
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     Log.d("check", result.get(0) + "");
+
+                    int number = checkIfNumber(result.get(0));
+                    if (number != -1) {
+
+                        number+=1;
+                        ArrayList<SieveNum> sieNums = new ArrayList<>();
+
+                        for(int i = 1; i < number; i++){
+
+                            sieNums.add(new SieveNum(i,true));
+
+                        }
+
+                        setValues(sieNums);
+
+                    }
                 }
                 break;
             }
@@ -111,5 +140,25 @@ public class MainActivity extends AppCompatActivity {
     public void onPause() {
         mBackground.unregisterSensorManager();
         super.onPause();
+    }
+
+    void setValues(ArrayList<SieveNum> sienumList) {
+
+        recyclerView.setVisibility(View.VISIBLE);
+        ll_mic.setVisibility(View.GONE);
+        recyclerView.setAdapter(new SieveOfEratosthenesAdapter(sienumList));
+    }
+
+
+    int checkIfNumber(String num) {
+        int number = 0;
+        try {
+            number = Integer.parseInt(num);
+
+        } catch (Exception e) {
+
+            return -1;
+        }
+        return number;
     }
 }
