@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.nvanbenschoten.motion.ParallaxImageView;
 import com.shishir.sieveoferatosthenes.utils.UIUtils;
 
 import java.util.ArrayList;
@@ -23,6 +24,9 @@ import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    /**Used Parallax effect to splash screen background*/
+    private ParallaxImageView mBackground;
 
     private ImageButton btnSpeak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
@@ -35,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         context = MainActivity.this;
+
+        mBackground = (ParallaxImageView)findViewById(android.R.id.background);
+
+        mBackground.setImageResource(R.drawable.ancient_greek);
 
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
 
@@ -91,5 +99,17 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mBackground.registerSensorManager();
+    }
+
+    @Override
+    public void onPause() {
+        mBackground.unregisterSensorManager();
+        super.onPause();
     }
 }
