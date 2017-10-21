@@ -7,6 +7,7 @@
         android:id="@android:id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clickable="true"
         parallax:motionTiltSensitivity="5.5" />
 
     <ImageView
@@ -15,6 +16,16 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:src="@drawable/eratostenes" />
+
+    <ImageView
+        android:id="@+id/img_touch_being"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
+        android:layout_margin="10dp"
+        android:src="@drawable/touch_to_begin" />
 
 
 </RelativeLayout>
