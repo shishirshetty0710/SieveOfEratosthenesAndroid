@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.nvanbenschoten.motion.ParallaxImageView;
 
 public class SplashActivity extends Activity {
@@ -19,6 +21,12 @@ public class SplashActivity extends Activity {
         mBackground = (ParallaxImageView)findViewById(android.R.id.background);
 
         mBackground.setImageResource(R.drawable.ancient_greek);
+
+        /**Library to add animation to image*/
+        YoYo.with(Techniques.Landing)
+                .duration(5000)
+                .repeat(0)
+                .playOn(findViewById(R.id.img_splash_center));
     }
 
 
