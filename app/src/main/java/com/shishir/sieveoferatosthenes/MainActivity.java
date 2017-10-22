@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.spacing);
         recyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
 
-        ll_mic = (LinearLayout)findViewById(R.id.ll_mic);
+        ll_mic = (LinearLayout) findViewById(R.id.ll_mic);
 
         recyclerView.setLayoutManager(new GridLayoutManager(context, 3));
 
@@ -114,19 +114,16 @@ public class MainActivity extends AppCompatActivity {
                     int number = checkIfNumber(result.get(0));
                     if (number != -1) {
 
-                        number+=1;
+                        number += 1;
                         ArrayList<SieveNum> sieNums = new ArrayList<>();
 
-                        for(int i = 0; i < number; i++){
+                        for (int i = 0; i < number; i++) {
 
-                            sieNums.add(new SieveNum(i,true));
+                            sieNums.add(new SieveNum(i, true));
 
                         }
-
                         setValues(sieNums);
-
-                        processGrid(number,sieNums);
-
+                        setValues(Logic.processGrid(number, sieNums));
                     }
                 }
                 break;
@@ -155,35 +152,19 @@ public class MainActivity extends AppCompatActivity {
 
 
     int checkIfNumber(String num) {
+        UIUtils.showSnackBar(findViewById(R.id.rl_mainactivity), "You said, " + num);
         int number = 0;
+        if (null != num && num.equals("hundred"))
+            return 100;
         try {
             number = Integer.parseInt(num);
 
         } catch (Exception e) {
-
+            UIUtils.showSnackBar(findViewById(R.id.rl_mainactivity), "Try saying a number this time!");
             return -1;
         }
         return number;
     }
 
-    void processGrid(int num, ArrayList<SieveNum> sieveNumArrayList){
 
-        for (int i = 2; i < Math.ceil(Math.sqrt(num)); i++) {
-
-            if (sieveNumArrayList.get(i).isFlag()) {
-
-                for (int k = 0; k < num; k++) {
-
-                    int j = i * i + k * i;
-
-                    if (j < num) {
-                        sieveNumArrayList.get(j).setFlag(false);
-                    }
-                }
-
-            }
-        }
-        sieveNumArrayList.remove(0);
-        setValues(sieveNumArrayList);
-    }
 }

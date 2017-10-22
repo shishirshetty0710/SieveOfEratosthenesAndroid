@@ -1,6 +1,8 @@
 package com.shishir.sieveoferatosthenes.utils;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
+import android.view.View;
 import android.widget.Toast;
 
 /**
@@ -9,8 +11,24 @@ import android.widget.Toast;
 
 public class UIUtils {
 
-    public static void showToast(Context ctx, int msg){
+    public static void showToast(Context ctx, int msg) {
 
-        Toast.makeText(ctx,msg, Toast.LENGTH_LONG).show();
+        Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
+    }
+
+    public static void showToast(Context ctx, String msg) {
+
+        Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
+    }
+
+    public static void showSnackBar(View coordinatorLayout, String msg) {
+
+        Snackbar
+                .make(coordinatorLayout, msg, Snackbar.LENGTH_LONG)
+                .setAction("", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                    }
+                }).show();
     }
 }
