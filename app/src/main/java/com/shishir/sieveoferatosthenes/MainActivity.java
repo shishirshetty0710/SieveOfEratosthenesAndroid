@@ -1,5 +1,6 @@
 package com.shishir.sieveoferatosthenes;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -20,11 +22,13 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.nvanbenschoten.motion.ParallaxImageView;
 import com.shishir.sieveoferatosthenes.adapter.SieveOfEratosthenesAdapter;
 import com.shishir.sieveoferatosthenes.adapter.SpacesItemDecoration;
 import com.shishir.sieveoferatosthenes.data.SieveNum;
+import com.shishir.sieveoferatosthenes.utils.PermissionUtil;
 import com.shishir.sieveoferatosthenes.utils.UIUtils;
 
 import java.util.ArrayList;
@@ -217,21 +221,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (sieNums != null) {
 
-                    StringBuilder stringBuilder = new StringBuilder();
-
-                    stringBuilder.append("-------------------------------\n");
-                    stringBuilder.append("Prime numbers from 1 to " + requestedNum + "\n");
-                    for (SieveNum objSeSieveNum : sieNums) {
-
-                        if (objSeSieveNum.isFlag()) {
-
-                            stringBuilder.append(objSeSieveNum.getNum()).append("\n");
-                        }
-
-                    }
-                    stringBuilder.append("-------------------------------\n");
-
-                    UIUtils.writeToFile(stringBuilder.toString(), context);
+                    checkPermission();
                 }
 
 
@@ -293,4 +283,53 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    void checkPermission() {
+
+        PermissionUtil.checkPermission(MainActivity.this, context, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                new PermissionUtil.PermissionAskListener() {
+                    @Override
+                    public void onNeedPermission() {
+                        ActivityCompat.requestPermissions(
+                                MainActivity.this,
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1
+                        );
+                    }
+
+                    @Override
+                    public void onPermissionPreviouslyDenied() {
+                        UIUtils.showToast(context, "Need this permssion to save result to text file.");
+                    }
+
+                    @Override
+                    public void onPermissionDisabled() {
+                        UIUtils.showToast(context, "Permission Disabled.");
+                    }
+
+                    @Override
+                    public void onPermissionGranted() {
+                        writeToFile();
+                    }
+                });
+
+    }
+
+    void writeToFile() {
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append("-------------------------------\n");
+        stringBuilder.append("Prime numbers from 1 to " + requestedNum + "\n");
+        for (SieveNum objSeSieveNum : sieNums) {
+
+            if (objSeSieveNum.isFlag()) {
+
+                stringBuilder.append(objSeSieveNum.getNum()).append("\n");
+            }
+
+        }
+        stringBuilder.append("-------------------------------\n");
+
+        UIUtils.writeToFile(stringBuilder.toString(), context);
+    }
 }
+
