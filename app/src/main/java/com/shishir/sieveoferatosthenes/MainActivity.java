@@ -1,17 +1,22 @@
 package com.shishir.sieveoferatosthenes;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -113,25 +118,28 @@ public class MainActivity extends AppCompatActivity {
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     Log.d("check", result.get(0) + "");
 
-                    int number = checkIfNumber(result.get(0));
-                    if (number != -1) {
-
-                        number += 1;
-                        ArrayList<SieveNum> sieNums = new ArrayList<>();
-
-                        for (int i = 0; i < number; i++) {
-
-                            sieNums.add(new SieveNum(i, true));
-
-                        }
-                        setValues(sieNums);
-                        setValues(Logic.processGrid(number, sieNums));
-                    }
+                    doTheMath(checkIfNumber(result.get(0)));
                 }
                 break;
             }
 
         }
+    }
+
+    private void doTheMath(int number) {
+
+        if (number == -1)
+            return;
+        number += 1;
+        ArrayList<SieveNum> sieNums = new ArrayList<>();
+
+        for (int i = 0; i < number; i++) {
+
+            sieNums.add(new SieveNum(i, true));
+
+        }
+        setValues(sieNums);
+        setValues(Logic.processGrid(number, sieNums));
     }
 
     @Override
@@ -186,11 +194,39 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.item2:
 
+                recyclerView.setVisibility(View.GONE);
+                ll_mic.setVisibility(View.VISIBLE);
+                showAlertEnterNum(MainActivity.this);
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    void showAlertEnterNum(Activity context) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = context.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.dialog_main_activity, null);
+        dialogBuilder.setView(dialogView);
+
+        final EditText edt = (EditText) dialogView.findViewById(R.id.edt_insert_num);
+
+        dialogBuilder.setMessage("Enter number here");
+        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                doTheMath(checkIfNumber(edt.getText().toString()));
+            }
+        });
+        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //dismiss dialog
+            }
+        });
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
     }
 
 }
