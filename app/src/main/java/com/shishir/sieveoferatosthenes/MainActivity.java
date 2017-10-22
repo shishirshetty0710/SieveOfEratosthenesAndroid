@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +15,7 @@ import android.widget.LinearLayout;
 
 import com.nvanbenschoten.motion.ParallaxImageView;
 import com.shishir.sieveoferatosthenes.adapter.SieveOfEratosthenesAdapter;
+import com.shishir.sieveoferatosthenes.adapter.SpacesItemDecoration;
 import com.shishir.sieveoferatosthenes.data.SieveNum;
 import com.shishir.sieveoferatosthenes.utils.UIUtils;
 
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         mBackground = (ParallaxImageView) findViewById(android.R.id.background);
 
-        mBackground.setImageResource(R.drawable.ancient_greek);
+        mBackground.setImageResource(R.drawable.bg_gradient);
 
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
 
@@ -61,9 +61,12 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.list);
 
+        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.spacing);
+        recyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
+
         ll_mic = (LinearLayout)findViewById(R.id.ll_mic);
 
-        recyclerView.setLayoutManager(new GridLayoutManager(context, 6));
+        recyclerView.setLayoutManager(new GridLayoutManager(context, 3));
 
         recyclerView.setVisibility(View.GONE);
 
@@ -114,13 +117,15 @@ public class MainActivity extends AppCompatActivity {
                         number+=1;
                         ArrayList<SieveNum> sieNums = new ArrayList<>();
 
-                        for(int i = 1; i < number; i++){
+                        for(int i = 0; i < number; i++){
 
                             sieNums.add(new SieveNum(i,true));
 
                         }
 
                         setValues(sieNums);
+
+                        processGrid(number,sieNums);
 
                     }
                 }
@@ -143,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void setValues(ArrayList<SieveNum> sienumList) {
-
         recyclerView.setVisibility(View.VISIBLE);
         ll_mic.setVisibility(View.GONE);
         recyclerView.setAdapter(new SieveOfEratosthenesAdapter(sienumList));
@@ -160,5 +164,26 @@ public class MainActivity extends AppCompatActivity {
             return -1;
         }
         return number;
+    }
+
+    void processGrid(int num, ArrayList<SieveNum> sieveNumArrayList){
+
+        for (int i = 2; i < Math.ceil(Math.sqrt(num)); i++) {
+
+            if (sieveNumArrayList.get(i).isFlag()) {
+
+                for (int k = 0; k < num; k++) {
+
+                    int j = i * i + k * i;
+
+                    if (j < num) {
+                        sieveNumArrayList.get(j).setFlag(false);
+                    }
+                }
+
+            }
+        }
+        sieveNumArrayList.remove(0);
+        setValues(sieveNumArrayList);
     }
 }

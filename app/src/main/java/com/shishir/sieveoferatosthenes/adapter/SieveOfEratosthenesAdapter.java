@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.shishir.sieveoferatosthenes.R;
 import com.shishir.sieveoferatosthenes.data.SieveNum;
 
@@ -40,8 +42,14 @@ public class SieveOfEratosthenesAdapter extends RecyclerView.Adapter<SieveOfErat
 
         if(mValues.get(position).isFlag())
             holder.ll_cross_not_prime.setVisibility(View.GONE);
-        else
+        else {
+
             holder.ll_cross_not_prime.setVisibility(View.VISIBLE);
+            YoYo.with(Techniques.FadeInUp)
+                    .duration(700)
+                    .repeat(0)
+                    .playOn(holder.ll_cross_not_prime);
+        }
     }
 
     @Override
