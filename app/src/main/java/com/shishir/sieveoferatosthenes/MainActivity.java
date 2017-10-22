@@ -11,11 +11,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -44,6 +45,13 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     LinearLayout ll_mic;
+
+    int requestedNum = 0;
+
+    ArrayList<SieveNum> sieNums = null;
+
+    private final int EDT_TEXT_DIALOG = 0;
+    private final int WEB_VIEW_DIALOG = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +124,6 @@ public class MainActivity extends AppCompatActivity {
 
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    Log.d("check", result.get(0) + "");
-
                     doTheMath(checkIfNumber(result.get(0)));
                 }
                 break;
@@ -128,10 +134,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void doTheMath(int number) {
 
-        if (number == -1)
+        sieNums = new ArrayList<>();
+
+        if (number < 2) {
+            recyclerView.setVisibility(View.GONE);
+            ll_mic.setVisibility(View.VISIBLE);
+            requestedNum = -1;
             return;
+        }
+
+        requestedNum = number;
         number += 1;
-        ArrayList<SieveNum> sieNums = new ArrayList<>();
+
 
         for (int i = 0; i < number; i++) {
 
@@ -196,7 +210,36 @@ public class MainActivity extends AppCompatActivity {
 
                 recyclerView.setVisibility(View.GONE);
                 ll_mic.setVisibility(View.VISIBLE);
-                showAlertEnterNum(MainActivity.this);
+                showAlertEnterNum(MainActivity.this, EDT_TEXT_DIALOG);
+                return true;
+
+            case R.id.item3:
+
+                if (sieNums != null) {
+
+                    StringBuilder stringBuilder = new StringBuilder();
+
+                    stringBuilder.append("-------------------------------\n");
+                    stringBuilder.append("Prime numbers from 1 to " + requestedNum + "\n");
+                    for (SieveNum objSeSieveNum : sieNums) {
+
+                        if (objSeSieveNum.isFlag()) {
+
+                            stringBuilder.append(objSeSieveNum.getNum()).append("\n");
+                        }
+
+                    }
+                    stringBuilder.append("-------------------------------\n");
+
+                    UIUtils.writeToFile(stringBuilder.toString(), context);
+                }
+
+
+                return true;
+
+            case R.id.item4:
+
+                showAlertEnterNum(MainActivity.this, WEB_VIEW_DIALOG);
                 return true;
 
             default:
@@ -204,26 +247,47 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void showAlertEnterNum(Activity context) {
+    /**
+     * Alert dialog code with an Edit text to take number
+     */
+    void showAlertEnterNum(Activity context, int type) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
         LayoutInflater inflater = context.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_main_activity, null);
+        View dialogView = null;
+        if (type == 0)
+            dialogView = inflater.inflate(R.layout.dialog_main_activity, null);
+        else if (type == 1)
+            dialogView = inflater.inflate(R.layout.dialog_web_activity, null);
         dialogBuilder.setView(dialogView);
 
-        final EditText edt = (EditText) dialogView.findViewById(R.id.edt_insert_num);
+        if (type == 0) {
+            final EditText edt = (EditText) dialogView.findViewById(R.id.edt_insert_num);
 
-        dialogBuilder.setMessage("Enter number here");
-        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+            dialogBuilder.setMessage("Enter number here");
+            dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
 
-                doTheMath(checkIfNumber(edt.getText().toString()));
-            }
-        });
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //dismiss dialog
-            }
-        });
+                    doTheMath(checkIfNumber(edt.getText().toString()));
+                }
+            });
+            dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    //dismiss dialog
+                }
+            });
+
+        } else if (type == 1) {
+
+            final WebView webView = (WebView) dialogView.findViewById(R.id.wb_edt_diag);
+            webView.setWebViewClient(new WebViewClient());
+            webView.loadUrl("https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes");
+            dialogBuilder.setMessage("About this project");
+            dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
+                }
+            });
+        }
 
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();

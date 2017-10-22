@@ -12,5 +12,8 @@
         android:id="@+id/item3"
         android:title="Save result" />
 
+    <item
+        android:id="@+id/item4"
+        android:title="About" />
 
 </menu>
