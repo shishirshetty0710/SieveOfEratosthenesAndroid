@@ -28,6 +28,7 @@ public class Logic {
             }
         }
         sieveNumArrayList.remove(0);
+        sieveNumArrayList.remove(0);
 
         return sieveNumArrayList;
     }
