@@ -5,6 +5,6 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="white">#ffffff</color>
-    <color name="bg_gradient_start">#24464e</color>
-    <color name="bg_gradient_end">#180a4f</color>
+    <color name="bg_gradient_start">#2196F3</color>
+    <color name="bg_gradient_end">#2196F3</color>
 </resources>
